@@ -7,7 +7,7 @@ const { randomUUID } = require('crypto');
 const request = require('supertest');
 const sitesQueries = require('../../queries/sites.queries');
 
-beforeAll(async () => {
+beforeEach(async () => {
     await sitesQueries.dropSitesTable();
     await sitesQueries.createSitesTable();
 });
@@ -58,6 +58,17 @@ describe('Test sites API', () => {
 
         expect(res.statusCode).toBe(409);
         expect(res.body.code).toBe(codes.DUPLICATE_RESOURCE);
+    });
+
+    it ('GET /sites retrieves all sites', async () => {
+        for (let i = 0; i < 3; i++) {
+            await sitesQueries.createSite(`get-sites-${i}`, 500, { region: 'MB' });
+        };
+
+        const res = await request(app).get('/sites');
+        expect(res.statusCode).toBe(200);
+        expect(res.body.sites_total).toBe(3);
+        expect(res.body.sites).toHaveLength(3);
     });
 
     it('GET /sites/:id/metrics compliance status is WITHIN_LIMIT when emissions below limit', async () => {

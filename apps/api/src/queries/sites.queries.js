@@ -31,6 +31,11 @@ const getSite = async (id) => {
     return res.rows[0];
 };
 
+const getAllSites = async () => {
+    const res = await db.query(`SELECT * FROM ${tables.SITES}`);
+    return res.rows;
+};
+
 const getSiteMetrics = async (id) => {
     const res = await db.query(`
         SELECT
@@ -53,6 +58,7 @@ module.exports = {
     createSitesTable,
     createSite,
     dropSitesTable,
+    getAllSites,
     getSite,
     getSiteMetrics
 };

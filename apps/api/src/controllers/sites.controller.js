@@ -42,6 +42,19 @@ const createSite = async (req, res, next) => {
     };
 };
 
+const getSites = async (req, res, next) => {
+    try {
+        const sites = await sitesQueries.getAllSites();
+        const resultBody = {
+            sites_total: sites.length,
+            sites: sites
+        };
+        res.json(resultBody);
+    } catch (err) {
+        next(err);
+    }
+};
+
 const getSiteMetrics = async (req, res, next) => {
     try {
         const siteId = req.params.id;
@@ -60,5 +73,6 @@ const getSiteMetrics = async (req, res, next) => {
 
 module.exports = {
     createSite,
+    getSites,
     getSiteMetrics
 };
