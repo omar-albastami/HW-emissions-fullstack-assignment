@@ -1,10 +1,9 @@
 const db = require('../db');
-
-const SITES_TABLE_NAME = process.env.DATABASE_NAME? `${process.env.DATABASE_NAME}_sites` : 'sites';
+const tables = require('../constants/tables');
 
 const createSitesTable = async () => {
     await db.query(`
-        CREATE TABLE IF NOT EXISTS ${SITES_TABLE_NAME} (
+        CREATE TABLE IF NOT EXISTS ${tables.SITES} (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             name TEXT NOT NULL UNIQUE,
             emission_limit NUMERIC NOT NULL CHECK (emission_limit >= 0),
@@ -17,7 +16,7 @@ const createSitesTable = async () => {
 
 const createSite = async (name, emission_limit, metadata) => {
     const res = await db.query(`
-        INSERT INTO ${SITES_TABLE_NAME} (name, emission_limit, metadata)
+        INSERT INTO ${tables.SITES} (name, emission_limit, metadata)
         VALUES ($1, $2, $3)
         RETURNING *
         `,
@@ -27,12 +26,18 @@ const createSite = async (name, emission_limit, metadata) => {
     return res.rows[0];
 };
 
+const getSite = async (id) => {
+    const res = await db.query(`SELECT * FROM ${tables.SITES} WHERE id = $1`, [id]);
+    return res.rows[0];
+};
+
 const dropSitesTable = async () => {
-    await db.query(`DROP TABLE IF EXISTS ${SITES_TABLE_NAME}`);
+    await db.query(`DROP TABLE IF EXISTS ${tables.SITES}`);
 };
 
 module.exports = {
     createSitesTable,
     createSite,
-    dropSitesTable
+    dropSitesTable,
+    getSite
 };

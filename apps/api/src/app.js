@@ -1,9 +1,12 @@
 const identityMiddleware = require('./middlewares/identity.middleware');
 const errorMiddleware = require('./middlewares/error.middleware');
+
+const ingestRouter = require('./routes/ingest.routes');
 const sitesRouter = require('./routes/sites.routes');
 
 const express = require('express');
 const AppError = require('./utils/AppError');
+
 const app = express();
 
 // Middlewares
@@ -18,6 +21,7 @@ app.get('/health', (req, res) => {
 
 // API routers
 app.use('/sites', sitesRouter);
+app.use('/ingest', ingestRouter);
 app.use((req, res, next) => {
     return next(new AppError (req.id, `Route ${req.url} does not exist`, 'NOT_FOUND', 404, false));
 });
