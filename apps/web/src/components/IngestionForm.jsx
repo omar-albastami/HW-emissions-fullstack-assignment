@@ -8,7 +8,7 @@ const IngestionForm = (props) => {
     const [formData, setFormData] = useState({
         siteId: '',
         value: '',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString().slice(0, 16)
     });
     const [measurements, setMeasurements] = useState([]);
     const [loading, setLoading] = useState(false);

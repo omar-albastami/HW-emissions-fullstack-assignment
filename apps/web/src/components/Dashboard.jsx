@@ -70,15 +70,6 @@ const Dashboard = () => {
                     </button>
                 </div>
             </div>
-            {lastUpdate && (
-                <div className='row mb-3'>
-                    <div className='col'>
-                        <small className='text-muted'>
-                            Last Updated: {lastUpdate.toLocaleString()}
-                        </small>
-                    </div>
-                </div>
-            )}
             {error && (
                 <div className='row mb-4'>
                     <div className='col'>
@@ -104,6 +95,15 @@ const Dashboard = () => {
                     />
                 </div>
             </div>
+            {lastUpdate && (
+                <div className='row mb-3'>
+                    <div className='col'>
+                        <small className='text-muted'>
+                            Last Updated: {lastUpdate.toLocaleString()}
+                        </small>
+                    </div>
+                </div>
+            )}
             <div className='row mb-4'>
                 <div className='col'>
                     <h3>Active Sites: ({sites.length})</h3>
@@ -124,7 +124,6 @@ const Dashboard = () => {
                         <div className='alert alert-info' role='alert'>
                             <h4 className='alert-heading'>No sites found</h4>
                             <p>There are currently no sites in the system!</p>
-                            <hr />
                         </div>
                     </div>
                 </div>

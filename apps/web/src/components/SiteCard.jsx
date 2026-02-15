@@ -3,8 +3,8 @@ import React from 'react';
 const SiteCard = (props) => {
     const { site, onRefresh } = props;
 
-    const isCompliant = site.total_emissions_to_date <= site.emission_limit;
-    const percentageUsed = ((site.total_emissions_to_date / site.emission_limit) * 100).toFixed(1);
+    const isCompliant = Number(site.total_emissions_to_date) <= Number(site.emission_limit);
+    const percentageUsed = ((Number(site.total_emissions_to_date) / Number(site.emission_limit)) * 100).toFixed(1);
 
     const statusColor = isCompliant? 'success' : 'danger';
     const statusText = isCompliant? 'Within Limit' : 'Limit Exceeded';

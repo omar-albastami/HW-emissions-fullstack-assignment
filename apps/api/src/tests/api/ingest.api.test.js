@@ -1,4 +1,5 @@
 const app = require('../../app');
+const codes = require('../../constants/codes');
 const { randomUUID } = require('crypto');
 const request = require('supertest');
 const testUtils = require('../utils');
@@ -53,5 +54,17 @@ describe('Test ingest API', () => {
 
         const siteMeasurements = await measurementQueries.getSiteMeasurements(site.id);
         expect(siteMeasurements.length).toBe(1);
+    });
+
+    it('POST /ingest returns a 400 error without measurements', async () => {
+        const payload = {
+            batch_id: randomUUID(),
+            site_id: randomUUID(),
+            measurements: []
+        };
+
+        const res = await request(app).post('/ingest').send(payload);
+        expect(res.statusCode).toBe(400);
+        expect(res.body.code).toBe(codes.INVALID_FIELD_VALUE);
     });
 });

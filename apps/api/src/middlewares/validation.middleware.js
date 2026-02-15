@@ -27,7 +27,7 @@ const validate = (schema, property = 'body') => {
         } catch (err) {
             if (err instanceof ZodError) {
                 // Extract the first error for simplicity
-                const firstError = err.errors[0];
+                const firstError = err.issues[0];
                 const message = `${firstError.path.join('.')}: ${firstError.message}`;
                 
                 return next(new AppError(req.id, message, codes.INVALID_FIELD_VALUE, 400));
