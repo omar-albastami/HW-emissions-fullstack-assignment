@@ -5,10 +5,6 @@ const pool = new Pool ({
     connectionString: process.env.DATABASE_URL
 });
 
-pool.on('connect', () => {
-    logger.info(null, 'Connected to PostgreSQL');
-});
-
 pool.on('error', (err) => {
     logger.error(null, `Unexpected PostgreSQL error: ${err.message}`);
     process.exit(1);

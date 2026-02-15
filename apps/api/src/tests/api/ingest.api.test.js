@@ -1,39 +1,25 @@
 const app = require('../../app');
-const codes = require('../../constants/codes');
-const db = require('../../db');
 const { randomUUID } = require('crypto');
 const request = require('supertest');
+const testUtils = require('../utils');
 
-const ingestQueries = require('../../queries/ingest.queries');
 const measurementQueries = require('../../queries/measurements.queries');
 const sitesQueries = require('../../queries/sites.queries');
 
-const createAll = async () => {
-    await sitesQueries.createSitesTable();
-    await ingestQueries.createIngestionBatchesTable();
-    await measurementQueries.createMeasurementsTable();
-};
-
-const dropAll = async () => {
-    await measurementQueries.dropMeasurementsTable();
-    await ingestQueries.dropIngestionBatchesTable();
-    await sitesQueries.dropSitesTable();
-};
-
 beforeAll(async () => {
-    await dropAll();
-    await createAll();
+    await testUtils.dropAllTables();
+    await testUtils.createAllTables();
 });
 
 afterAll(async () => {
-    await dropAll();
-    await db.shutdown();
+    await testUtils.dropAllTables();
+    await testUtils.shutdown();
 });
 
 describe('Test ingest API', () => {
     it('POST /ingest ingests a batch and updates site total', async () => {
         const site = await sitesQueries.createSite('Test site', 10, { region: 'ON' });
-        const res = await request(app)
+        await request(app)
             .post('/ingest')
             .send({
                 batch_id: randomUUID(),

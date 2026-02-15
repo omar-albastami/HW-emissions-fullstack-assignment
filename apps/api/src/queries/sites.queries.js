@@ -32,7 +32,7 @@ const getSite = async (id) => {
 };
 
 const getAllSites = async () => {
-    const res = await db.query(`SELECT * FROM ${tables.SITES}`);
+    const res = await db.query(`SELECT * FROM ${tables.SITES} ORDER BY id ASC`);
     return res.rows;
 };
 

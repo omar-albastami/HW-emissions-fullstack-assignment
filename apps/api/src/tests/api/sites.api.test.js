@@ -6,15 +6,16 @@ const db = require('../../db');
 const { randomUUID } = require('crypto');
 const request = require('supertest');
 const sitesQueries = require('../../queries/sites.queries');
+const testUtils = require('../utils');
 
 beforeEach(async () => {
-    await sitesQueries.dropSitesTable();
-    await sitesQueries.createSitesTable();
+    await testUtils.dropAllTables();
+    await testUtils.createAllTables();
 });
 
 afterAll(async () => {
-    await sitesQueries.dropSitesTable();
-    await db.shutdown();
+    await testUtils.dropAllTables();
+    await testUtils.shutdown();
 });
 
 const updateSiteTotalEmissions = async (siteId, newTotalEmissions) => {
