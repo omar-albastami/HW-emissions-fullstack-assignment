@@ -1,6 +1,9 @@
 const app = require('../../app');
 const codes = require('../../constants/codes');
+const complianceStatuses = require('../../constants/compliance_status');
+const tables = require('../../constants/tables');
 const db = require('../../db');
+const { randomUUID } = require('crypto');
 const request = require('supertest');
 const sitesQueries = require('../../queries/sites.queries');
 
@@ -13,6 +16,16 @@ afterAll(async () => {
     await sitesQueries.dropSitesTable();
     await db.shutdown();
 });
+
+const updateSiteTotalEmissions = async (siteId, newTotalEmissions) => {
+    await db.query(`
+        UPDATE ${tables.SITES}
+        SET total_emissions_to_date = $1
+        WHERE id = $2
+        `,
+        [newTotalEmissions, siteId]
+    );
+};
 
 describe('Test sites API', () => {
     it('POST /sites creates a site', async () => {
@@ -46,4 +59,32 @@ describe('Test sites API', () => {
         expect(res.statusCode).toBe(409);
         expect(res.body.code).toBe(codes.DUPLICATE_RESOURCE);
     });
+
+    it('GET /sites/:id/metrics compliance status is WITHIN_LIMIT when emissions below limit', async () => {
+        const site = await sitesQueries.createSite('metrics-test-0', 500, { region: 'MB' });
+        await updateSiteTotalEmissions(site.id, 450);
+
+        const res = await request(app).get(`/sites/${site.id}/metrics`);
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body.compliance_status).toBe(complianceStatuses.WITHIN_LIMIT);
+        expect(res.body.remaining_allowance).toBe(50);
+    });
+
+    it('GET /sites/:id/metrics compliance status is LIMIT_EXCEEDED when emissions greater than limit', async () => {
+        const site = await sitesQueries.createSite('metrics-test-1', 500, { region: 'MB' });
+        await updateSiteTotalEmissions(site.id, 600);
+
+        const res = await request(app).get(`/sites/${site.id}/metrics`);
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body.compliance_status).toBe(complianceStatuses.LIMIT_EXCEEDED);
+        expect(res.body.remaining_allowance).toBe(0);
+    });
+
+    it('GET /sites/:id/metrics returns 404 for non-existent site', async () => {
+        const res = await request(app).get(`/sites/${randomUUID()}/metrics`);
+        expect(res.statusCode).toBe(404);
+        expect(res.body.code).toBe(codes.SITE_NOT_FOUND);
+    }); 
 });

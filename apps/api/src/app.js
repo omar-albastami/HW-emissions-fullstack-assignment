@@ -5,6 +5,7 @@ const ingestRouter = require('./routes/ingest.routes');
 const sitesRouter = require('./routes/sites.routes');
 
 const express = require('express');
+const codes = require('./constants/codes');
 const AppError = require('./utils/AppError');
 
 const app = express();
@@ -23,7 +24,7 @@ app.get('/health', (req, res) => {
 app.use('/sites', sitesRouter);
 app.use('/ingest', ingestRouter);
 app.use((req, res, next) => {
-    return next(new AppError (req.id, `Route ${req.url} does not exist`, 'NOT_FOUND', 404, false));
+    return next(new AppError (req.id, `Route ${req.url} does not exist`, codes.ENDPOINT_NOT_FOUND, 404, false));
 });
 
 // Catch-all error middlware

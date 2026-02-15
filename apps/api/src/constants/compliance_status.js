@@ -1,0 +1,4 @@
+module.exports = {
+    WITHIN_LIMIT: 'WITHIN_LIMIT',
+    LIMIT_EXCEEDED: 'LIMIT_EXCEEDED'
+};

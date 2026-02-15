@@ -1,6 +1,7 @@
 const AppError = require('../utils/AppError');
 const codes = require('../constants/codes');
 const sitesQueries = require('../queries/sites.queries');
+const sitesService = require('../services/sites.service');
 const utils = require('../utils');
 
 const createSite = async (req, res, next) => {
@@ -38,9 +39,26 @@ const createSite = async (req, res, next) => {
             return next(new AppError (req.id, `Site '${name}' already exists`, codes.DUPLICATE_RESOURCE, 409, false));
         }
         next(err);
-    }
+    };
+};
+
+const getSiteMetrics = async (req, res, next) => {
+    try {
+        const siteId = req.params.id;
+
+        const metrics = await sitesService.getSiteMetrics(siteId);
+        
+        if (!metrics) {
+            throw new AppError (req.id, `Site with ID '${siteId}' does not exist`, codes.SITE_NOT_FOUND, 404, false);
+        };
+
+        res.status(200).json(metrics);
+    } catch (err) {
+        next(err);
+    };
 };
 
 module.exports = {
-    createSite
+    createSite,
+    getSiteMetrics
 };

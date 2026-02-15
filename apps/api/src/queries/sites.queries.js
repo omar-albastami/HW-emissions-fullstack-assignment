@@ -31,6 +31,20 @@ const getSite = async (id) => {
     return res.rows[0];
 };
 
+const getSiteMetrics = async (id) => {
+    const res = await db.query(`
+        SELECT
+            id AS site_id,
+            emission_limit,
+            total_emissions_to_date,
+            created_at
+        FROM ${tables.SITES}
+        WHERE id = $1
+    `,
+    [id]);
+    return res.rows[0];
+};
+
 const dropSitesTable = async () => {
     await db.query(`DROP TABLE IF EXISTS ${tables.SITES}`);
 };
@@ -39,5 +53,6 @@ module.exports = {
     createSitesTable,
     createSite,
     dropSitesTable,
-    getSite
+    getSite,
+    getSiteMetrics
 };
