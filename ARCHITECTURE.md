@@ -1,6 +1,29 @@
 # 🌍 Highwood Emissions Data Platform - Architecture Documentation
 
 ## 📋 Table of Contents
+- [🌍 Highwood Emissions Data Platform - Architecture Documentation](#-highwood-emissions-data-platform---architecture-documentation)
+  - [📋 Table of Contents](#-table-of-contents)
+  - [📎 Architectural Overview](#-architectural-overview)
+    - [Core Requirements Addressed](#core-requirements-addressed)
+  - [⚙ System Architecture](#-system-architecture)
+    - [High-Level Architecture](#high-level-architecture)
+  - [🧠 Design Decisions](#-design-decisions)
+    - [1. Idempotency through Client-Generated Batch IDs](#1-idempotency-through-client-generated-batch-ids)
+    - [2. Atomic Transactions For Ingestion](#2-atomic-transactions-for-ingestion)
+    - [3. Concurrency Control Strategy](#3-concurrency-control-strategy)
+    - [4. Database Schema Design](#4-database-schema-design)
+    - [5. Validation \& Error Strategy](#5-validation--error-strategy)
+    - [6. Layered Architecture](#6-layered-architecture)
+  - [💻 Backend Architecture](#-backend-architecture)
+    - [Request Lifecycle](#request-lifecycle)
+    - [Error Handling](#error-handling)
+  - [🌐 Frontend Architecture](#-frontend-architecture)
+    - [State Management](#state-management)
+    - [Network Resilience \& Retry Handling](#network-resilience--retry-handling)
+  - [🚀 Future Improvements](#-future-improvements)
+    - [Current Limitations](#current-limitations)
+    - [Future Enhancements](#future-enhancements)
+
 
 ## 📎 Architectural Overview
 This platform provides real-time monitoring of industrial site emissions with a focus on data integrity, network resilience, and atomic operations. The system is designed to handle high-concurrency updates while preventing duplicate data even under unstable network conditions.
