@@ -16,6 +16,52 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
+    networks:
+      - emissions_network
+
+  # Build backend API
+  api:
+    build: ./apps/api
+    container_name: emissions_api
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-emissions}:${POSTGRES_PASSWORD:-emissions}@postgres:5432/${POSTGRES_DB:-emissions}
+      DATABASE_NAME: ${DATABASE_NAME:-emissions_api}
+      PORT: 3000
+      NODE_ENV: ${NODE_ENV:-development}
+      UI_URL: ${UI_URL:-http://localhost:3001}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - emissions_network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # Build frontend web app
+  web:
+    build: ./apps/web
+    container_name: emissions_ui
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: ${API_URL:-http://localhost:3000}
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - emissions_network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5173"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
 
   # Optional: DB admin UI for reviewers/candidates. Safe to keep.
   # If you don't want extra surface area, remove this service.
@@ -31,17 +77,13 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    networks:
+      - emissions_network
     profiles: ["tools"]
 
-  # Build API according to defined Dockerfile
-  api:
-    build: ./apps/api
-    ports:
-      - "3000:3000"
-    env_file:
-      - ./apps/api/.env
-    depends_on:
-      postgres:
-        condition: service_healthy
+networks:
+  emissions_network:
+    driver: bridge
+
 volumes:
   emissions_pg_data:

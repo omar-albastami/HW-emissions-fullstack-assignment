@@ -24,7 +24,7 @@ const SiteCard = (props) => {
                             <span>{Number(site.total_emissions_to_date).toFixed(2)} kg</span>
                         </div>
                         <div className="d-flex justify-content-between mb-1">
-                            <span className="fw-bold">Methan Emission Limit:</span>
+                            <span className="fw-bold">Methane Emission Limit:</span>
                             <span>{Number(site.emission_limit).toFixed(2)} kg</span>
                         </div>
                     </div>

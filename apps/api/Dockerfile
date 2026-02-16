@@ -12,7 +12,3 @@ COPY . .
 EXPOSE 3000
 
 CMD ["node", "src/server.js"]
-
-# Ping health endpoint every 10s
-HEALTHCHECK --interval=10s --timeout=2s --retries=3 \
-  CMD wget -qO- http://localhost:3000/health || exit 1
